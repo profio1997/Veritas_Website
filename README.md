@@ -11,3 +11,6 @@ Edit `src/page.html`, then run `python3 src/build_site.py` (see the script heade
 ## Waitlist
 The form is a **placeholder**: it shows the success message and keeps the address only in the visitor's own browser. **Nothing is collected yet.**
 To collect sign-ups, create a form with a service such as Formspree, Tally or Google Forms, and set `WAITLIST_ENDPOINT` near the top of the script in `src/page.html`, then rebuild.
+
+## Films
+`assets/pitch-film.mp4` is the final pitch film (voice only, 2:32). `assets/film.mp4` is the longer launch film the page's "Watch the launch film" section plays.
