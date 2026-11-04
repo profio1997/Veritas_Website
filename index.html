@@ -136,6 +136,11 @@ p { margin: 0; }
 .waitlist-done .msg { font-size: var(--fs-small); color: var(--dim); }
 .seg { display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--line); }
 .seg-q { font-size: 0.85rem; color: var(--soft); }
+.seg-step { display: grid; gap: 8px; }
+.seg-step[hidden] { display: none; }
+.seg { gap: 14px; }
+.seg-text { width: 100%; padding: 11px 13px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line-2); color: var(--text); font: inherit; font-size: 0.9rem; }
+.seg-text:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(227,176,75,.2); }
 .seg-q span { color: var(--muted); }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { font: 500 0.85rem/1 var(--sans); padding: 9px 12px; border-radius: 999px; border: 1px solid var(--line-2); background: transparent; color: var(--text); cursor: pointer; }
@@ -191,6 +196,10 @@ p { margin: 0; }
   box-shadow: 0 40px 120px -40px rgba(227,176,75,.22), 0 30px 80px -30px rgba(0,0,0,.8);
 }
 .hero-media .frame { aspect-ratio: 1 / 1; max-width: 100%; }
+.hero-film { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 12px; padding: 9px 18px 9px 9px; border-radius: 999px; background: rgba(11,11,12,.78); border: 1px solid var(--line-2); color: var(--strong); font: 600 0.95rem var(--sans); cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); white-space: nowrap; transition: background .2s ease, border-color .2s ease; }
+.hero-film:hover { background: rgba(11,11,12,.92); border-color: var(--gold); }
+.hero-film .btn-play { width: 38px; height: 38px; }
+.hero-film .btn-play svg { width: 13px; height: 13px; }
 .hero-media video { width: 100%; height: 100%; object-fit: cover; }
 .cap-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 12px; font-size: 0.8rem; color: var(--muted); min-height: 30px; }
 .cap-row .l { display: flex; align-items: center; gap: 10px; min-width: 0; }
@@ -535,6 +544,7 @@ footer { border-top: 1px solid var(--line); padding-block: 48px 56px; }
         <p class="readalong" id="readalong">Veritas reads your textbook, notes or any document to you in your own voice, every word highlighted. Then it checks what you understood and brings back what you missed, until you&rsquo;ve mastered it.</p>
         <form class="waitlist" data-waitlist data-form="hero" novalidate>
           <label class="sr-only" for="email-hero">Email address</label>
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
           <div class="waitlist-row">
             <input id="email-hero" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
             <button class="btn btn-gold" type="submit">Join the waitlist</button>
@@ -547,6 +557,7 @@ footer { border-top: 1px solid var(--line); padding-block: 48px 56px; }
           <video id="heroVideo" muted playsinline loop autoplay preload="auto" poster="assets/hero-poster.jpg" aria-label="Veritas screens: read-along with a visual, drawing from memory, teaching it back, flashcards, a daily review and the plan">
             <source src="assets/hero-loop.mp4" type="video/mp4">
           </video>
+          <button class="hero-film" type="button" data-playfilm="0" aria-label="Watch the launch film"><span class="btn-play"><svg aria-hidden="true"><use href="#play"/></svg></span><span>Watch the launch film</span></button>
         </div>
       </div>
     </div>
@@ -820,6 +831,7 @@ footer { border-top: 1px solid var(--line); padding-block: 48px 56px; }
         </div>
         <form class="waitlist" data-waitlist data-form="mid" novalidate>
           <label class="sr-only" for="email-mid">Email address</label>
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
           <div class="waitlist-row">
             <input id="email-mid" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
             <button class="btn btn-gold" type="submit">Join the waitlist</button>
@@ -1004,6 +1016,7 @@ footer { border-top: 1px solid var(--line); padding-block: 48px 56px; }
         <div class="launch">Launching December 2026</div>
         <form class="waitlist" data-waitlist data-form="final" novalidate>
           <label class="sr-only" for="email-final">Email address</label>
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
           <div class="waitlist-row">
             <input id="email-final" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
             <button class="btn btn-gold" type="submit">Join the waitlist</button>
@@ -1044,7 +1057,7 @@ footer { border-top: 1px solid var(--line); padding-block: 48px 56px; }
   // PLACEHOLDER MODE while WAITLIST_ENDPOINT is empty: visitors see "You're on the list." but nothing is saved anywhere
   // except their own browser. Connect a form service (Tally, Google Forms, Formspree, Loops...) before real traffic.
   // WAITLIST_ENDPOINT: your sign-up service's URL (Loops, ConvertKit, Formspree, your API). It receives
-  // JSON {email, form, referrer, utm_*} on join and {email, segment} if the visitor answers the optional question.
+  // JSON on join: {_subject, kind:"join", email, form, referrer, tz, screen, utm_*, ref}; then ONE optional {_subject, kind:"profile", email, segment, device}.
   var WAITLIST_ENDPOINT = "https://formspree.io/f/mljjzwkw";
   var SHARE_URL = "";
 
@@ -1053,8 +1066,17 @@ footer { border-top: 1px solid var(--line); padding-block: 48px 56px; }
   var narrow = function () { return window.matchMedia("(max-width: 900px)").matches; };
 
   // ----- analytics hook: cookieless; does nothing unless the hosted page loads Plausible or a dataLayer
+  // ----- signals kept for the waitlist (never personal): first-touch source, how far they watched, what they explored
+  var eng = { film_pct: 0, clips: {}, scroll: 0, t0: Date.now(), first: {} };
+  try {
+    var qs = new URLSearchParams(location.search), ft = JSON.parse(localStorage.getItem("veritas_first_touch") || "null");
+    if (!ft) { ft = { at: new Date().toISOString().slice(0, 10), src: qs.get("utm_source") || "", med: qs.get("utm_medium") || "", cmp: qs.get("utm_campaign") || "", ref: qs.get("ref") || "", rf: (document.referrer || "").slice(0, 120) }; localStorage.setItem("veritas_first_touch", JSON.stringify(ft)); }
+    eng.first = ft;
+  } catch (e) {}
+  window.addEventListener("scroll", function () { var h = document.documentElement; var p = Math.round(100 * (window.scrollY + innerHeight) / Math.max(1, h.scrollHeight)); if (p > eng.scroll) eng.scroll = p; }, { passive: true });
   function track(name, props) {
     try {
+      if (name === "module_tab" && props && props.clip) eng.clips[props.clip] = 1;
       if (typeof window.plausible === "function") window.plausible(name, { props: props || {} });
       if (Array.isArray(window.dataLayer)) window.dataLayer.push(Object.assign({ event: name }, props || {}));
     } catch (e) {}
@@ -1207,6 +1229,7 @@ footer { border-top: 1px solid var(--line); padding-block: 48px 56px; }
   });
   film.addEventListener("timeupdate", function () {
     var t = film.currentTime, cur = null;
+    if (film.duration) eng.film_pct = Math.max(eng.film_pct, Math.round(100 * t / film.duration));
     chapterBtns.forEach(function (b) { if (t + 0.25 >= parseFloat(b.getAttribute("data-t"))) cur = b; });
     chapterBtns.forEach(function (b) { if (b === cur && !film.paused) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); });
     if (film.duration) [25, 50, 75, 100].forEach(function (q) { if (!quartiles[q] && t / film.duration >= q / 100 - 0.005) { quartiles[q] = 1; track("film_progress", { percent: q }); } });
@@ -1294,9 +1317,13 @@ footer { border-top: 1px solid var(--line); padding-block: 48px 56px; }
     return fetch(WAITLIST_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(body) })
       .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r; });
   }
+  function myCode() {
+    try { var c = localStorage.getItem("veritas_my_code"); if (!c) { c = Math.random().toString(36).slice(2, 8); localStorage.setItem("veritas_my_code", c); } return c; } catch (e) { return "share"; }
+  }
+  function emailKind(e) { var d = (e.split("@")[1] || "").toLowerCase(); return /\.edu$|\.ac\.[a-z]{2}$|\.edu\.[a-z]{2}$/.test(d) ? "school" : /^(gmail|googlemail|yahoo|outlook|hotmail|live|icloud|me|aol|proton|protonmail|msn)\./.test(d) ? "personal" : "work"; }
   function shareLink() {
     var base = SHARE_URL || ((location.protocol === "http:" || location.protocol === "https:") ? location.origin + location.pathname : "");
-    return base ? base + (base.indexOf("?") > -1 ? "&" : "?") + "ref=share" : "";
+    return base ? base + (base.indexOf("?") > -1 ? "&" : "?") + "ref=" + myCode() : "";
   }
   function showError(form, input, text) {
     var old = form.querySelector(".waitlist-error"); if (old) old.remove();
@@ -1328,24 +1355,49 @@ footer { border-top: 1px solid var(--line); padding-block: 48px 56px; }
         msg.textContent = sent
           ? "We’ll email " + val + " when Veritas launches."
           : "This draft isn’t connected to a sign-up service yet, so " + val + " was not saved or sent.";
-        // optional one-tap question
+        // two optional one-tap questions; the answers go out together, ONCE, shortly after the last tap (or when the tab closes)
+        var answers = {}, sendTimer = null, sentProfile = false;
+        function sendProfile() {
+          clearTimeout(sendTimer); if (sentProfile || !Object.keys(answers).some(function (k) { return answers[k]; })) return; sentProfile = true;
+          var prof = Object.assign({ _subject: "Veritas waitlist: profile", kind: "profile", email: val, film_pct: eng.film_pct, scroll_pct: eng.scroll,
+            clips_viewed: Object.keys(eng.clips).length, secs_on_page: Math.round((Date.now() - eng.t0) / 1000) }, answers);
+          track("waitlist_profile", prof);
+          if (sent && WAITLIST_ENDPOINT) fetch(WAITLIST_ENDPOINT, { method: "POST", keepalive: true, headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(prof) }).catch(function () {});
+        }
+        window.addEventListener("pagehide", sendProfile);
+        var queue = function () { sentProfile = false; clearTimeout(sendTimer); sendTimer = setTimeout(sendProfile, 6000); };
         var seg = document.createElement("div"); seg.className = "seg";
-        seg.innerHTML = '<p class="seg-q">What will you bring first? <span>Optional, one tap.</span></p>';
-        var chips = document.createElement("div"); chips.className = "chips"; chips.setAttribute("role", "group"); chips.setAttribute("aria-label", "What will you bring first?");
-        [["exam", "A textbook for an exam"], ["work", "Documents for work"], ["books", "Books I’ve meant to read"], ["other", "Something else"]].forEach(function (c) {
-          var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = c[1]; b.setAttribute("aria-pressed", "false");
-          b.addEventListener("click", function () {
-            chips.querySelectorAll(".chip").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
-            track("waitlist_segment", { form: where, segment: c[0] });
-            if (sent && WAITLIST_ENDPOINT) post({ email: val, segment: c[0] }).catch(function () {});
+        var steps = [];
+        [["segment", "What will you bring first?", [["exam", "A textbook for an exam"], ["work", "Documents for work"], ["books", "Books I’ve meant to read"], ["other", "Something else"]]],
+         ["today", "What do you use today to remember what you read?", [["nothing", "Nothing really"], ["notes", "Notes or highlighting"], ["cards", "Flashcards (Anki, Quizlet)"], ["audio", "Audiobooks or read-aloud"], ["other", "Something else"]]]].forEach(function (q, qi) {
+          var wrap = document.createElement("div"); wrap.className = "seg-step"; if (qi > 0) wrap.hidden = true; steps.push(wrap);
+          var p = document.createElement("p"); p.className = "seg-q"; p.innerHTML = q[1] + (qi === 0 ? " <span>Optional, takes a few seconds.</span>" : ""); wrap.appendChild(p);
+          var chips = document.createElement("div"); chips.className = "chips"; chips.setAttribute("role", "group"); chips.setAttribute("aria-label", q[1]);
+          q[2].forEach(function (c) {
+            var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = c[1]; b.setAttribute("aria-pressed", "false");
+            b.addEventListener("click", function () {
+              chips.querySelectorAll(".chip").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+              answers[q[0]] = c[0]; queue();
+              if (steps[qi + 1]) steps[qi + 1].hidden = false; else if (last) last.hidden = false;
+            });
+            chips.appendChild(b);
           });
-          chips.appendChild(b);
+          wrap.appendChild(chips); seg.appendChild(wrap);
         });
-        seg.appendChild(chips);
+        var last = document.createElement("div"); last.className = "seg-step"; last.hidden = true; seg.appendChild(last);
+        var tq = document.createElement("p"); tq.className = "seg-q"; tq.textContent = "What is the one thing you most want to remember better?"; last.appendChild(tq);
+        var ta = document.createElement("input"); ta.type = "text"; ta.maxLength = 160; ta.placeholder = "A subject, a book, an exam (optional)"; ta.setAttribute("aria-label", "What do you most want to remember better?"); ta.className = "seg-text";
+        ta.addEventListener("input", function () { answers.want = ta.value.trim(); queue(); });
+        last.appendChild(ta);
+        var ok = document.createElement("button"); ok.type = "button"; ok.className = "chip"; ok.style.marginTop = "10px"; ok.setAttribute("aria-pressed", "false");
+        ok.textContent = "I\u2019m happy to give 15 minutes of feedback";
+        ok.addEventListener("click", function () { var on = ok.getAttribute("aria-pressed") !== "true"; ok.setAttribute("aria-pressed", on ? "true" : "false"); answers.call_ok = on ? "yes" : ""; queue(); });
+        
+        last.appendChild(ok);
         // share row
         var share = document.createElement("div"); share.className = "share";
         var link = shareLink();
-        share.innerHTML = "<span>Know someone with reading to keep? Send them Veritas.</span>";
+        share.innerHTML = "<span>Know someone with reading to keep? Send them Veritas. Friends who join through your link are counted for you.</span>";
         if (link) {
           var field = document.createElement("input"); field.readOnly = true; field.value = link; field.setAttribute("aria-label", "Link to this page");
           var copy = document.createElement("button"); copy.type = "button"; copy.className = "btn btn-ghost btn-sm"; copy.textContent = "Copy link";
@@ -1374,7 +1426,12 @@ footer { border-top: 1px solid var(--line); padding-block: 48px 56px; }
         track("waitlist_submit", { form: where, sent: false, placeholder: true });
         setTimeout(function () { done(true); }, 450); return;
       }
-      post(Object.assign({ email: val, form: where, referrer: document.referrer || "" }, utm()))
+      if (form.querySelector("[name=_gotcha]") && form.querySelector("[name=_gotcha]").value) { done(true); return; }   // a bot filled the hidden field: look successful, send nothing
+      var tz = ""; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
+      post(Object.assign({ _subject: "Veritas waitlist: join", kind: "join", email: val, email_kind: emailKind(val), form: where, referrer: document.referrer || "", tz: tz,
+        screen: innerWidth < 700 ? "phone" : innerWidth < 1100 ? "tablet" : "desktop", my_code: myCode(), first_src: eng.first.src || "", first_med: eng.first.med || "",
+        first_cmp: eng.first.cmp || "", first_ref: eng.first.ref || "", first_seen: eng.first.at || "", film_pct: eng.film_pct, scroll_pct: eng.scroll,
+        secs_on_page: Math.round((Date.now() - eng.t0) / 1000) }, utm()))
         .then(function () { done(true); })
         .catch(function () {
           button.disabled = false; button.textContent = "Join the waitlist";
