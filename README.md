@@ -11,5 +11,5 @@ Edit `src/page.html`, then run `python3 src/build_site.py` (see the script heade
 ## Waitlist
 Sign-ups post to a Formspree form (`WAITLIST_ENDPOINT` near the top of the script in `src/page.html`). Submissions arrive by email and in the Formspree dashboard, where they can be exported as CSV. To change service, replace that URL and rebuild.
 
-## Films
-`assets/pitch-film.mp4` is the final pitch film (voice only, 2:32). `assets/film.mp4` is the longer launch film the page's "Watch the launch film" section plays.
+## Film
+`assets/pitch-film.mp4` is the final pitch film (voice only, 2:32); the page's film section plays it, with chapters.
