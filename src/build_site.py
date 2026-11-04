@@ -26,7 +26,7 @@ if base:
     # The success screen's share link points at the real site, not wherever it is opened.
     body = body.replace('var SHARE_URL = "";', f'var SHARE_URL = "{base}/";', 1)
 desc = ("Veritas reads anything to you in your own voice, then checks what you "
-        "understood and brings back what you missed. Early access December 2026.")
+        "understood and brings back what you missed. Launching December 2026.")
 og_img = f"{base}/assets/og-image.jpg" if base else "assets/og-image.jpg"
 canonical = f'<link rel="canonical" href="{base}/">\n<meta property="og:url" content="{base}/">\n' if base else ""
 head = f"""<!doctype html>
