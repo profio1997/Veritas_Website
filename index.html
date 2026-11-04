@@ -180,6 +180,7 @@ p { margin: 0; }
 .readalong .w.read { color: var(--strong); }
 .for-line { font-size: 0.9rem; color: var(--dim); }
 .for-line b { color: var(--soft); font-weight: 500; }
+.hero-top { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
 .film-link { display: inline-flex; align-items: center; gap: 12px; color: var(--text); font-weight: 500; font-size: 0.95rem; background: none; border: 0; padding: 0; cursor: pointer; font-family: var(--sans); justify-self: start; text-align: left; }
 .film-link:hover { color: var(--strong); }
 .film-link small { color: var(--muted); font-weight: 400; font-size: 0.85rem; }
@@ -526,7 +527,10 @@ footer { border-top: 1px solid var(--line); padding-block: 48px 56px; }
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <span class="launch-chip"><i></i>Launching December 2026</span>
+        <div class="hero-top">
+          <button class="film-link" type="button" data-playfilm="0"><span class="btn-play"><svg aria-hidden="true"><use href="#play"/></svg></span><span>Watch the launch film</span></button>
+          <span class="launch-chip"><i></i>Launching December 2026</span>
+        </div>
         <h1>Master what <em>you read.</em></h1>
         <p class="readalong" id="readalong">Veritas reads your textbook, notes or any document to you in your own voice, every word highlighted. Then it checks what you understood and brings back what you missed, until you&rsquo;ve mastered it.</p>
         <form class="waitlist" data-waitlist data-form="hero" novalidate>
@@ -537,7 +541,6 @@ footer { border-top: 1px solid var(--line); padding-block: 48px 56px; }
           </div>
         </form>
         <p class="for-line">For <b>textbooks, lecture notes, papers, reports</b> and the books you&rsquo;ve meant to read.</p>
-        <button class="film-link" type="button" data-playfilm="0"><span class="btn-play"><svg aria-hidden="true"><use href="#play"/></svg></span><span>Watch the launch film</span></button>
       </div>
       <div class="hero-media">
         <div class="frame">
